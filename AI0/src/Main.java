@@ -6,8 +6,8 @@ public class Main {
         graph.showLinks();
         graph.showSets();
         Node n;
-        String[] province = {"Dobrogea","Banat"};
-        n = graph.searchSolution("Arad", "Bucharest",  province, Algorithms.AStarSearch);
+        String[] province = {"Dobrogea"};
+        n = graph.searchSolution("Arad", "Bucharest",  "Dobrogea", Algorithms.AStarSearch);
         graph.showSolution(n);
     }
 }

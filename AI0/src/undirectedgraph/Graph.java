@@ -149,23 +149,24 @@ public class Graph {
 			newGraph.addVertice(v.getLabel(),v.getLatitude(),v.getLongitude());
 			newGraph.addEdge(i.getLabel(), v.getLabel(),
 					searchSolution(i.getLabel(), v.getLabel(), Algorithms.AStarSearch).getPathCost());
-			newGraph.addEdge(g.getLabel(), v.getLabel(),
-					searchSolution(g.getLabel(), v.getLabel(), Algorithms.AStarSearch).getPathCost());
+			newGraph.addEdge(v.getLabel(), g.getLabel(),
+					searchSolution(v.getLabel(), g.getLabel(), Algorithms.AStarSearch).getPathCost());
 		}
 		Node n = newGraph.searchSolution(initLabel,goalLabel, algID);
 		this.expansions += newGraph.expansions;
 		this.generated += newGraph.generated;
 		this.repeated += newGraph.repeated;
 		this.time += newGraph.time;
+		newGraph.showLinks();
 		return n;
 	}
 
 	public Node searchSolution(String initLabel, String goalLabel, String [] provinceLabels, @NotNull Algorithms algID){
 		if(provinceLabels.length < 1){
 			return searchSolution(initLabel, goalLabel, algID);
-		} else if (provinceLabels.length == 1){
+		} else if(provinceLabels.length == 1) {
 			return searchSolution(initLabel, goalLabel, provinceLabels[0], algID);
-		} else {
+		} else{
 			Vertex i = this.getVertice(initLabel);
 			Vertex g = this.getVertice(goalLabel);
 			Graph newGraph = new Graph();
