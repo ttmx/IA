@@ -22,9 +22,7 @@ def readDistanceMatrix(fName):
                 distances.append(row)
             i += 1
     f.close()
-    dm = []
-    dm.append(cities)
-    dm.append(distances)
+    dm = [cities, distances]
     return dm
 
 # creates a distance matrix given another, m, and a list containing a subset
@@ -37,9 +35,7 @@ def createSmallMatrix(m,clist):
         for v in range(0,c):
             row.append(distance(m,cities[c],cities[v]))
         distances.append(row)
-    dm = []
-    dm.append(cities)
-    dm.append(distances)
+    dm = [cities, distances]
     return dm
 
 # creates a distance matrix given another, m, and a String, filter, containing

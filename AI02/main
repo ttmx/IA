@@ -1,0 +1,6 @@
+from distanceMatrix import readDistanceMatrix
+
+
+for i in readDistanceMatrix("distancias.txt"):
+    print(i)
+    print("a")
