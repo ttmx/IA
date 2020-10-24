@@ -28,16 +28,14 @@ class Problem:
                                        self.small_matrix[0][(city_n + 1) % len(self.small_matrix[0])])
         return Solution(self.small_matrix[0], total_distance)
 
-
     def decay(self, temperature):
         return int(temperature * 0.99)
 
     def n_iter(self, n_iter):
-        return n_iter - 1
+        return n_iter * 1.01
 
     def should_stop(self, temp):
         return temp < 1
-
 
     def init_temp(self):
         min_dist = float("inf")
@@ -54,26 +52,29 @@ class Problem:
         list = solution.get_list()
         i = random.randint(0, len(list) - 1)
         j = random.randint(0, len(list) - 2)
+        # Here we fix j to the appropriate place
         if i <= j:
             j += 1
         nice_list = list.copy()
+        # Here we create a new list, that will start at i + 1, and will have the same "circular order"
         for a in range(0, (i + 1) % (len(nice_list))):
             nice_list.append(nice_list.pop(0))
+
+        # Here we break up the list in the reversible part, and the rest
         j_list = nice_list[:(j - i) % (len(nice_list))]
         rest_list = nice_list[(j - i) % (len(nice_list)):]
 
+        # Reverse the order of the list, from i+1 to j
         j_list.reverse()
 
+        # Concat processed lists
         end_list = j_list + rest_list
+
+        # Calculate variance
         delta = distance(self.small_matrix, list[i], list[j]) + \
                 distance(self.small_matrix, list[(i + 1) % len(list)], list[(j + 1) % len(list)]) - \
                 distance(self.small_matrix, list[i], list[(i + 1) % len(list)]) - \
                 distance(self.small_matrix, list[j], list[(j + 1) % len(list)])
-
-        # total_distance = 0
-        # for city_n in range(len(end_list)):
-        #     print(end_list[city_n],":",end_list[(city_n+1) % len(end_list)] ,"=>", distance(self.small_matrix, end_list[city_n], end_list[(city_n + 1) % len(end_list)]))
-        #     total_distance += distance(self.small_matrix, end_list[city_n], end_list[(city_n + 1) % len(end_list)])
 
         return Solution(end_list, solution.get_cost() + delta)
 
@@ -81,16 +82,15 @@ class Problem:
 class Solver:
     def __init__(self, problem):
         self.problem = problem
-        self.itcount = 0
         self.initial_cost = problem.init_cost
-        self.end_cost = -1
+        self.end_cost = problem.init_cost
 
     def solve(self, n_iter):
         corrente = self.problem.init_solution()
         melhor = corrente
         t = self.problem.init_temp()
         while True:
-            for n in range(n_iter):
+            for n in range(int(n_iter)):
                 proximo = self.problem.get_neighbor(corrente)
                 d = proximo.get_cost() - corrente.get_cost()
                 if d < 0:
@@ -101,7 +101,6 @@ class Solver:
                 else:
                     if t < 0 and exp(-d / t) < random.random():
                         corrente = proximo
-                self.itcount += 1
             if self.problem.should_stop(t):
                 return melhor
             n_iter = self.problem.n_iter(n_iter)
@@ -120,7 +119,7 @@ print(orig_cities)
 
 solv = Solver(prob)
 print(solv.initial_cost)
-print(solv.solve(1500).get_list())
+print(solv.solve(100).get_list())
 print(solv.end_cost)
 
 # import itertools
