@@ -35,7 +35,9 @@ def createSmallMatrix(m,clist):
         for v in range(0,c):
             row.append(distance(m,cities[c],cities[v]))
         distances.append(row)
-    dm = [cities, distances]
+    dm = []
+    dm.append(cities)
+    dm.append(distances)
     return dm
 
 # creates a distance matrix given another, m, and a String, filter, containing
