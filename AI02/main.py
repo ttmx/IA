@@ -29,7 +29,7 @@ class Problem:
         return Solution(self.small_matrix[0], total_distance)
 
     def decay(self, temperature):
-        return int(temperature * 0.8)
+        return temperature * 0.8
 
     def n_iter(self, n_iter):
         return n_iter * 1.2
@@ -88,26 +88,35 @@ class Solver:
 
 
     def solve(self, n_iter):
-        corrente = self.problem.init_solution()
-        melhor = corrente
+        current = self.problem.init_solution()
+        best = current
+        worst = current
         t = self.problem.init_temp()
         num_loops = 0
         while True:
             for n in range(int(n_iter)):
                 num_loops += 1
-                proximo = self.problem.get_neighbor(corrente)
-                d = proximo.get_cost() - corrente.get_cost()
+                next = self.problem.get_neighbor(current)
+                d = next.get_cost() - current.get_cost()
                 if d < 0:
-                    corrente = proximo
-                if corrente.get_cost() < melhor.get_cost():
-                    melhor = corrente
-                    self.end_cost = melhor.get_cost()
+                    current = next
+                else:
+                    if next.get_cost() >= worst.get_cost():
+                        worst = next
+                if current.get_cost() < best.get_cost():
+                    best = current
+                    self.end_cost = best.get_cost()
                 else:
                     if t < 0 and exp(-d / t) < random.random():
-                        corrente = proximo
+                        current = next
             if self.problem.should_stop(t):
+                print("**************WORST SOLUTION***************")
+                print(getInitials(worst.get_list()))
+                print("Cost ", worst.get_cost())
+                print("***********NUMBER OF ITERATIONS************")
                 print(num_loops)
-                return melhor
+                print("***************BEST SOLUTION***************")
+                return best
             n_iter = self.problem.n_iter(n_iter)
             t = self.problem.decay(t)
 
@@ -121,13 +130,13 @@ for i in range(len(cities)):
     orig_cities.append(getCity(orig_matrix[0], cities[i]))
 
 prob = Problem(orig_matrix, orig_cities)
-print(orig_cities)
+print("***********INITIAL SOLUTION*************")
+print(getInitials(orig_cities))
 
 solv = Solver(prob)
-print(solv.initial_cost)
-
-print(getInitials(solv.solve(13).get_list()))
-print(solv.end_cost)
+print("Cost ", solv.initial_cost)
+print(getInitials(solv.solve(1).get_list()))
+print("Cost ", solv.end_cost)
 
 # import itertools
 # small_matrix = createSmallMatrix(orig_matrix,orig_cities)
