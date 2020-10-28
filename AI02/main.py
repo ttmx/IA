@@ -29,10 +29,10 @@ class Problem:
         return Solution(self.small_matrix[0], total_distance)
 
     def decay(self, temperature):
-        return int(temperature * 0.99)
+        return int(temperature * 0.8)
 
     def n_iter(self, n_iter):
-        return n_iter * 1.01
+        return n_iter * 1.2
 
     def should_stop(self, temp):
         return temp < 1
@@ -85,12 +85,16 @@ class Solver:
         self.initial_cost = problem.init_cost
         self.end_cost = problem.init_cost
 
+
+
     def solve(self, n_iter):
         corrente = self.problem.init_solution()
         melhor = corrente
         t = self.problem.init_temp()
+        num_loops = 0
         while True:
             for n in range(int(n_iter)):
+                num_loops += 1
                 proximo = self.problem.get_neighbor(corrente)
                 d = proximo.get_cost() - corrente.get_cost()
                 if d < 0:
@@ -102,6 +106,7 @@ class Solver:
                     if t < 0 and exp(-d / t) < random.random():
                         corrente = proximo
             if self.problem.should_stop(t):
+                print(num_loops)
                 return melhor
             n_iter = self.problem.n_iter(n_iter)
             t = self.problem.decay(t)
@@ -109,17 +114,19 @@ class Solver:
 
 orig_matrix = readDistanceMatrix("distancias.txt")
 
-orig_cities = []
-for i in sys.argv:
-    orig_cities.append(i)
 
-orig_cities.remove(sys.argv[0])
+orig_cities = []
+cities = sys.argv[1]
+for i in range(len(cities)):
+    orig_cities.append(getCity(orig_matrix[0], cities[i]))
+
 prob = Problem(orig_matrix, orig_cities)
 print(orig_cities)
 
 solv = Solver(prob)
 print(solv.initial_cost)
-print(solv.solve(100).get_list())
+
+print(getInitials(solv.solve(13).get_list()))
 print(solv.end_cost)
 
 # import itertools
