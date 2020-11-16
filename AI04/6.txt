@@ -1,0 +1,78 @@
+%geradores
+
+1{casados(X,Y): mulher(X)}1 :- homem(Y).
+1{casados(X,Y): homem(Y)}1 :- mulher(X).
+
+:- casados(X,Y), casados(W,Z), X!=W, Y!=Z, pref(X,Y,N), pref(X,Z,M), pref(Z,X,O), pref(Z,W,P), M>N, O>P.
+
+1{corDeCasa(C,N): casa(N)}1 :- cor(C).
+1{corDeCasa(C,N): cor(C)}1 :- casa(N).
+
+1{vive(X,C): casa(C)}1 :- homem(X).
+1{vive(X,C): homem(X)}1 :- casa(C).
+1{vive(X,C): casa(C)}1 :- mulher(X).
+1{vive(X,C): mulher(X)}1 :- casa(C).
+
+:- casa(C), vive(Y,C), vive(X,C), not casados(X,Y), Y!=X, mulher(X), homem(Y).
+
+1{bebe(B,C): casa(C)}1 :- bebida(B).
+1{bebe(B,C): bebida(B)}1 :- casa(C).
+
+1{adepto(C,N): casa(N)}1:- clube(C).
+1{adepto(C,N): clube(C)}1:- casa(N).
+
+1{animalDe(A,X): animal(A)}1:- mulher(X).
+1{animalDe(A,X): mulher(X)}1:- animal(A).
+
+%restricoes
+%casas 1 2 3 4 5 (mais a esquerda  1, mais a direita 5).
+%1 o joao e pai do miguel.
+pai(joao, miguel).
+%2 o pedro e pai do joao.
+pai(pedro, joao).
+%3 o pedro e pai do marco.
+pai(pedro, marco).
+%4 o marco e pai do carlos.
+pai(marco, carlos).
+%5 o pai do carlos vive na casa vermelha.
+:- pai(X, carlos), vive(X, N), casa(N), corDeCasa(C, N), cor(C), C != vermelha.
+%6 a mulher do miguel tem um cao.
+:- casados(X, miguel), animalDe(A, X), mulher(X), animal(A), A != cao.
+%7 o avo do carlos vive na primeira casa a esquerda (casa nr 1).
+:- pai(X, carlos), pai(Y,X), vive(Y,N), N != 1.
+%8 na casa amarela sao adeptos do porto.
+:- corDeCasa(amarela, N), casa(N), adepto(C,N), C!= porto.
+%9 o adepto da academica vive na casa ao lado da casa da dona da raposa.
+aux :- adepto(academica, N), animalDe(raposa, X), vive(X,C), |N-C|== 1.
+:- not aux.
+%10 o pedro vive ao lado da casa azul.
+aux10 :- vive(pedro, N), casa(N), casa(M), corDeCasa(azul, M), |M-N|=1.
+:- not aux10.
+%11 a mulher do adepto do sporting tem uma tartaruga.
+:- adepto(sporting, N), vive(X,N), mulher(X), animalDe(A,X), A != tartaruga.
+%12 na casa do adepto do benfica bebe-se sumo.
+:- adepto(benfica,N), casa(N), bebe(B, N), B != sumo.
+%13 o pai do miguel bebe cha.
+:- pai(X, miguel), vive(X,C), bebe(B,C), B != cha.
+%14 o filho do marco e adepto do vitoria de setubal.
+:- pai(marco, X), vive(X,N), casa(N), adepto(C,N), C != setubal. 
+%15 o adepto do porto vive ao lado da casa da dona do cavalo.
+aux15 :- adepto(porto, N),  animalDe(cavalo, X), vive(X, M), |M-N| =1.
+:- not aux15.
+%16 na casa verde bebe-se cafe.
+:- casa(N), corDeCasa(verde,N), bebe(B,N), B != cafe.
+%17 a casa verde encontra-se a direita da casa branca.
+aux17 :- casa(N), corDeCasa(branca,N), casa(M), corDeCasa(verde, M), M-N = 1.
+:- not aux17.
+%18 na casa do meio bebe-se leite.
+:- casa(N), N = 3, bebe(B,N), B != leite.
+%19 a ana e o pedro sao casados.
+casados(ana, pedro).
+%20 a maria e o carlos nao sao casados.
+:- casados(maria, carlos).
+
+
+
+
+
+
